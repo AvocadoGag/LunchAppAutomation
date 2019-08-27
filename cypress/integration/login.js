@@ -1,49 +1,36 @@
-describe('Sourcebooks login', function() {
 
-    it('Should display validation for empty user after attempted loggin', function () {
- 
-        cy.visit('/');
-        cy.get('.Select.not-valid').should('not.visible')
-        cy.get('[type="submit"]').click();
-        cy.get('.Select.not-valid').should('be.visible')
-    })
- 
-    const Roles =
-    [
-        {
-            name: "User",
-            tabs: '1'
-        },
-        {
-            name: "Team Lead",
-            tabs: '2'
-        },
-        {
-            name: "Manager",
-            tabs: '5'
-        },
-        {
-            name: "Accountant",
-            tabs: '5'
-        },
-        {
-            name: "Admin",
-            tabs: '6'
-        }
-    ];
-       
+import LoginPage from '../PageObjects/loginPage';
+import MainScreen from '../PageObjects/MainScreen';
+
+const loginPage = new LoginPage();
+const mainScreen = new MainScreen();
+
+function login() {
+    loginPage.visit();
+    loginPage.getEmail().should("be.visible");
+    loginPage.getEmail().type("admin@red.vln");
+    loginPage.getPassword().should("be.visible");
+    loginPage.getPassword().type("Ferrari000");
+    loginPage.getLoginbutton().should("be.visible");
+    loginPage.getLoginbutton().click();
+}
+
+describe('LunchApp', function() {
     
-    Roles.forEach((role) => {
-        it(`Verify ${role.name} role can log in and should see appropriate tabs`, function() {
-            cy.visit('/');
-            cy.get('[id="loginForm.userId"]').click({force:true});
-            cy.get('[aria-label="Dainius Gaidamavičius"]').click();
-            cy.get('[id="loginForm.role"]').click({force:true});
-            cy.get(`[aria-label='${role.name}']`).click();
-            cy.get('[type="submit"]').click();
-            cy.get('.user-info__title').contains('Dainius Gaidamavicius'); 
-            cy.get('.main-nav').find('li').should('have.length', role.tabs);                      
-            cy.get('.main-nav__link--active').should('have.css','color', 'rgb(64, 76, 237)');
-        })
-    })  
+
+    it('Should log out ', function () {
+
+        login();
+        mainScreen.getLogOutButton().click();
+        mainScreen.getLogo().should("be.visible");
+    })
+
+    it('Add Soup and MainDish ', function () {
+
+        login();
+        mainScreen.getSoup().click();
+        mainScreen.getMainDish().click();
+        mainScreen.getSaveOrder().click();
+    })
+    
 })
